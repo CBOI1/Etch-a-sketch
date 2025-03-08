@@ -1,21 +1,42 @@
 // add 16 div grid to body
 let body = document.body;
-const GRID_COUNT = 16;
+const DEFAULT_GRID_COUNT = 100;
 
 let container = document.querySelector("div.container");
 //calculate width and height of each grid cell
 
-function createGrid() {
-    let gridCellWidth = Math.floor(container.offsetWidth / GRID_COUNT);
-    let gridCellHeight = Math.floor(container.offsetHeight / GRID_COUNT);
+function createGrid(grid_count) {
+    let gridCellWidth = container.offsetWidth / grid_count;
+    let gridCellHeight = container.offsetHeight / grid_count;
     
-    for (let i = 0; i < GRID_COUNT * GRID_COUNT; i++) {
+    for (let i = 0; i < grid_count * grid_count; i++) {
         let newDiv = document.createElement("div");
         newDiv.style.height = `${gridCellHeight}px`;
         newDiv.style.width = `${gridCellWidth}px`;
-        newDiv.style.border = "1px solid grey";
+        newDiv.style.border = "0.1px solid grey";
+        newDiv.addEventListener("mouseleave", e => {
+            const classes = e.target.classList;
+            if (!classes.contains("colored")) {
+                classes.add("colored");
+            }
+        })
         container.appendChild(newDiv);
     }
 }
 
-createGrid();
+const gridButton = document.querySelector("#grid-button");
+gridButton.addEventListener("click", e => {
+    let userInput = +prompt("Enter grid cell count dimension (only 1 dimension)", 50)
+    if (Number.isInteger(userInput)) {
+        userInput = Math.min(Math.max(userInput, 16), 100);
+        //clear the grid 
+        while (container.childNodes.length > 0) {
+            container.removeChild(container.firstChild);
+        }
+        createGrid(userInput);
+    }
+})
+
+createGrid(DEFAULT_GRID_COUNT);
+
+
